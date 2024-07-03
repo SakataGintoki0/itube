@@ -103,13 +103,13 @@ export const loginUser = asyncHandler(async (req, res) => {
   // 5. access and refresh token
   // 6. send cookie
 
-  const { email, username, password } = req.body;
   console.log(req.body);
+  const { email, username, password } = req.body;
   if (!(username || email)) {
     throw new ApiError(400, "username or email is required");
   }
 
-  const user = User.findOne({
+  const user = await User.findOne({
     $or: [{ username }, { email }],
   });
 
@@ -117,6 +117,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(404, "User does not exists");
   }
 
+  // console.log("this is the user: " + user);
   const isPasswordValid = await user.isPasswordCorrect(password);
 
   if (!isPasswordValid) {
